@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  font-size: 0.9em;
+}
+
+th,
+td {
+  border: 1px solid #1f2937;
+  background: transparent;
+  padding: 0.2em 0.4em;
+  height: 1.2em;
+}

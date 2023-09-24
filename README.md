@@ -1,40 +1,75 @@
-# Next.js & NextUI Template
+# Robot Framework Script Builder
 
-This is a template for creating applications using Next.js 13 (app directory) and NextUI (v2).
+a web app that allow none tech savvy users to generate an automation script for Robot Framework.
 
-## Technologies Used
+## keywords scraper
 
-- [Next.js 13](https://nextjs.org/docs/getting-started)
-- [NextUI v2](https://nextui.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Tailwind Variants](https://tailwind-variants.org)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Framer Motion](https://www.framer.com/motion/)
-- [next-themes](https://github.com/pacocoursey/next-themes)
+```js
+const array = [];
+document
+  .querySelectorAll("#keywords-container .keywords > div")
+  .forEach((elm) => {
+    array.push({
+      name: elm.id,
+      args: [...elm.querySelectorAll(".arguments-list .arg-name")].map(
+        (arg) => {
+          const obj = {
+            name: arg.innerText,
+            required: arg.classList.contains("arg-required"),
+          };
 
-## How to Use
+          if (arg?.nextElementSibling?.classList?.contains("arg-type")) {
+            obj.type = arg.nextElementSibling?.innerText.split(" ");
+          }
 
+          if (
+            arg?.nextElementSibling?.classList.contains("arg-default-container")
+          ) {
+            obj.default =
+              arg.nextElementSibling?.querySelector(
+                ".arg-default-value"
+              )?.innerText;
+          }
 
-### Use the template with create-next-app
+          if (
+            arg?.nextElementSibling?.nextElementSibling?.classList?.contains(
+              "arg-type"
+            ) &&
+            !obj.type
+          ) {
+            obj.type =
+              arg.nextElementSibling?.nextElementSibling?.innerText?.split(" ");
+          }
 
-To create a new project based on this template using `create-next-app`, run the following command:
+          return obj;
+        }
+      ),
+      description: elm.querySelector(".doc p")?.innerText,
+      example: elm.querySelector(".doc table")?.outerHTML,
+      source: document.title,
+    });
+  });
 
-```bash
-npx create-next-app -e https://github.com/nextui-org/next-app-template
+console.log(JSON.stringify(array));
 ```
 
-### Install dependencies
+to clean the data
 
-```bash
-npm install
-```
+- remove all new lines `\n`
+- remove all forward slashes `\`
+- replace all `${` with `{`
+- replace all "<table with `<table
+- replace all </table>" with </table>`
 
-### Run the development server
+## Next
 
-```bash
-npm run dev
-```
-
-## License
-
-Licensed under the [MIT license](https://github.com/nextui-org/next-app-template/blob/main/LICENSE).
+- [ ] add more keywords from other libraries (for now we have SeleniumLibrary and BuiltIn)
+- [ ] add reading variables from excel file with a for loop for each row
+- [ ] add drag and drop to reorder keywords
+- [ ] add nested keywords
+- [ ] add custom keywords
+- [ ] add documentation
+- [ ] add save as json file
+- [ ] add upload json file that was saved from this app
+- [ ] render inputs based on the type of the argument
+- [ ] add keyword examples
