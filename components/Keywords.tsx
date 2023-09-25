@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Input } from "@nextui-org/input";
 import { KeywordType } from "@/types";
 import { SeleniumLibrary, BuiltIn } from "@/config/data";
@@ -90,6 +90,7 @@ const Keywords = ({
 }: {
   setBlocks: React.Dispatch<React.SetStateAction<any[]>>;
 }) => {
+  const addBtnRef = useRef<HTMLButtonElement>(null);
   const [list, setList] = useState<KeywordType[]>(allKeywords);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedKeyword, setSelectedKeyword] = useState<KeywordType | null>(
@@ -112,6 +113,7 @@ const Keywords = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     const formData = new FormData(e.currentTarget);
+    console.log(formData);
     const newBlock = {
       ...selectedKeyword,
       args: selectedKeyword?.args.map((arg) => ({
@@ -120,7 +122,10 @@ const Keywords = ({
         default: arg.default,
         required: arg.required,
         value: formData.get(arg.name),
+        dynamic: formData.get(`${arg.name}_dynamic`) === "true",
       })),
+      canFail: formData.get("can_fail") === "true",
+      id: Date.now(),
     };
 
     setBlocks((blocks) => [...blocks, newBlock]);
@@ -227,7 +232,10 @@ const Keywords = ({
                 <span
                   title={keyword.description}
                   className="text-slate-500 cursor-pointer hover:text-slate-200 transition-all"
-                  onClick={() => setSelectedKeyword(keyword)}
+                  onClick={() => {
+                    setSelectedKeyword(keyword);
+                    addBtnRef.current?.focus();
+                  }}
                 >
                   {keyword.name}
                 </span>
@@ -282,6 +290,7 @@ const Keywords = ({
             variant="bordered"
             className="mt-4 w-full"
             onPress={() => setShowModal(true)}
+            ref={addBtnRef}
           >
             Add Block
           </Button>

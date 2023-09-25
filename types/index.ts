@@ -5,6 +5,7 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
 };
 
 export interface KeywordType {
+  id?: number;
   source: string;
   name: string;
   args: {
@@ -13,8 +14,10 @@ export interface KeywordType {
     default?: string;
     type?: string[];
     value?: string;
+    dynamic?: boolean;
   }[];
   description: string;
   example?: string;
   disabled?: boolean;
+  canFail?: boolean;
 }

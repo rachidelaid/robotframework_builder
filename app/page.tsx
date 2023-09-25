@@ -11,9 +11,12 @@ import {
 import { Button } from "@nextui-org/button";
 import { KeywordType } from "@/types";
 import { Chip } from "@nextui-org/chip";
+import { generateScript } from "@/utils/generateScript";
 
 import Keywords from "@/components/Keywords";
 import BlockModal from "@/components/BlockModal";
+import { generateTemplate } from "@/utils/generateTemplate";
+import UploadCSV from "@/components/UploadCSV";
 
 const chipColors: Record<
   string,
@@ -49,10 +52,166 @@ const MoreIcon = (props: { className?: string }) => (
 
 const Page = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [csvData, setCsvData] = useState<string[][]>([[]]);
   const [selectedKeyword, setSelectedKeyword] = useState<KeywordType | null>(
     null
   );
-  const [blocks, setBlocks] = useState<KeywordType[]>([]);
+  const [blocks, setBlocks] = useState<KeywordType[]>([
+    {
+      name: "Open Browser",
+      args: [
+        {
+          name: "url",
+          type: ["<str>", "<None>"],
+          default: "None",
+          required: false,
+          value: "",
+          dynamic: false,
+        },
+        {
+          name: "browser",
+          type: ["<str>"],
+          default: "firefox",
+          required: false,
+          value: "",
+          dynamic: false,
+        },
+        {
+          name: "alias",
+          type: ["<str>", "<None>"],
+          default: "None",
+          required: false,
+          value: "",
+          dynamic: false,
+        },
+        {
+          name: "remote_url",
+          type: ["<bool>", "<str>"],
+          default: "False",
+          required: false,
+          value: "",
+          dynamic: false,
+        },
+        {
+          name: "desired_capabilities",
+          type: ["<dict>", "<None>", "<str>"],
+          default: "None",
+          required: false,
+          value: "",
+          dynamic: false,
+        },
+        {
+          name: "ff_profile_dir",
+          type: ["<FirefoxProfile>", "<str>", "<None>"],
+          default: "None",
+          required: false,
+          value: "",
+          dynamic: false,
+        },
+        {
+          name: "options",
+          type: ["<Any>", "<None>"],
+          default: "None",
+          required: false,
+          value: "",
+          dynamic: false,
+        },
+        {
+          name: "service_log_path",
+          type: ["<str>", "<None>"],
+          default: "None",
+          required: false,
+          value: "",
+          dynamic: false,
+        },
+        {
+          name: "executable_path",
+          type: ["<str>", "<None>"],
+          default: "None",
+          required: false,
+          value: "",
+          dynamic: false,
+        },
+      ],
+      description: "Opens a new browser instance to the optional url.",
+      example:
+        '<table border="1"><tbody><tr><th>Browser</th><th>Name(s)</th></tr><tr><td>Firefox</td><td>firefox, ff</td></tr><tr><td>Google Chrome</td><td>googlechrome, chrome, gc</td></tr><tr><td>Headless Firefox</td><td>headlessfirefox</td></tr><tr><td>Headless Chrome</td><td>headlesschrome</td></tr><tr><td>Internet Explorer</td><td>internetexplorer, ie</td></tr><tr><td>Edge</td><td>edge</td></tr><tr><td>Safari</td><td>safari</td></tr></tbody></table>',
+      source: "SeleniumLibrary",
+      canFail: false,
+      id: 1695652106506,
+    },
+    {
+      name: "Go To",
+      args: [
+        {
+          name: "url",
+          required: true,
+          value: "{VARIABLE}",
+          dynamic: true,
+        },
+      ],
+      description: "Navigates the current browser window to the provided url.",
+      source: "SeleniumLibrary",
+      canFail: false,
+      id: 1695652113838,
+    },
+    {
+      name: "Input Text",
+      args: [
+        {
+          name: "locator",
+          type: ["<WebElement>", "<str>"],
+          required: true,
+          value: "css=[name='q']",
+          dynamic: false,
+        },
+        {
+          name: "text",
+          type: ["<str>"],
+          required: true,
+          value: "{VARIABLE}",
+          dynamic: true,
+        },
+        {
+          name: "clear",
+          type: ["<bool>"],
+          default: "True",
+          required: false,
+          value: "",
+          dynamic: false,
+        },
+      ],
+      description:
+        "Types the given text into the text field identified by locator.",
+      source: "SeleniumLibrary",
+      canFail: true,
+      id: 1695652128557,
+    },
+    {
+      name: "Sleep",
+      source: "BuiltIn",
+      args: [
+        {
+          name: "time_",
+          required: true,
+          value: "3",
+          dynamic: false,
+        },
+        {
+          name: "reason",
+          default: "None",
+          required: false,
+          value: "",
+          dynamic: false,
+        },
+      ],
+      description: "Pauses the test executed for the given time.",
+      example:
+        "<tbody><tr>n<td>Sleep</td>n<td>42</td>n<td></td>n</tr>n<tr>n<td>Sleep</td>n<td>1.5</td>n<td></td>n</tr>n<tr>n<td>Sleep</td>n<td>2 minutes 10 seconds</td>n<td></td>n</tr>n<tr>n<td>Sleep</td>n<td>10s</td>n<td>Wait for a reply</td>n</tr>n</tbody>",
+      canFail: false,
+      id: 1695652183893,
+    },
+  ]);
 
   const disableBlock = (index: number) => {
     const newBlocks = [...blocks];
@@ -66,35 +225,29 @@ const Page = () => {
     setBlocks(newBlocks);
   };
 
-  const generateScript = () => {
-    const robotScript = blocks
-      .map((keywordData) => {
-        const { name, args, disabled } = keywordData;
-        const argumentLines = args.map((arg: any) => arg.value).join("\t");
+  const modifyBlock = (e: React.FormEvent<HTMLFormElement>) => {
+    const formData = new FormData(e.currentTarget);
+    const newBlock = {
+      ...selectedKeyword,
+      args: selectedKeyword?.args.map((arg) => ({
+        name: arg.name,
+        type: arg.type,
+        default: arg.default,
+        required: arg.required,
+        value: formData.get(arg.name),
+        dynamic: formData.get(`${arg.name}_dynamic`) === "true",
+      })),
+      canFail: formData.get("can_fail") === "true",
+    };
 
-        return `${disabled ? "#" : ""}\t${name}\t${argumentLines}`;
-      })
-      .join("\n");
-
-    const fileContent = `*** Settings ***
-Library     SeleniumLibrary
-
-*** Test Cases ***
-RUN USER DEFINED SCRIPT
-${robotScript}`;
-
-    // Create a Blob containing the .robot file content
-    const blob = new Blob([fileContent], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-
-    // Create a download link
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "generated.robot";
-    a.click();
+    const newBlocks = blocks.map((block) => {
+      if (block.id === selectedKeyword?.id) {
+        return newBlock;
+      }
+      return block;
+    });
+    setBlocks(newBlocks as KeywordType[]);
   };
-
-  const modifyBlock = (e: React.FormEvent<HTMLFormElement>) => {};
 
   return (
     <div className="flex">
@@ -137,6 +290,11 @@ ${robotScript}`;
                     >
                       {block.source}
                     </Chip>
+                    {block.canFail && (
+                      <span className="text-xs text-yellow-300 font-normal absolute bottom-0 left-2">
+                        (with try catch)
+                      </span>
+                    )}
                     <p className="font-bold">{block.name}</p>
                     {block.args.map((arg: any) => (
                       <p key={arg.name} className="text-gray-500">
@@ -195,13 +353,33 @@ ${robotScript}`;
           ))
         )}
       </div>
-      <Button
-        color="success"
-        className="absolute bottom-8 right-8 z-50"
-        onPress={generateScript}
-      >
-        Generate Script
-      </Button>
+      <div className="flex gap-2 absolute bottom-8 right-8 z-50">
+        {blocks.filter((b) => !b.disabled).length > 0 &&
+          !blocks.some((b) => b.args.some((arg) => arg.dynamic)) && (
+            <Button
+              color="success"
+              onPress={() => generateScript(blocks, csvData)}
+            >
+              Generate Script
+            </Button>
+          )}
+        {blocks.some((b) => b.args.some((arg) => arg.dynamic)) && (
+          <>
+            {csvData[0].length > 0 && (
+              <Button
+                color="success"
+                onPress={() => generateScript(blocks, csvData)}
+              >
+                Generate Script
+              </Button>
+            )}
+            <Button color="primary" onPress={() => generateTemplate(blocks)}>
+              Download Template
+            </Button>
+            <UploadCSV setCsvData={setCsvData} />
+          </>
+        )}
+      </div>
     </div>
   );
 };
