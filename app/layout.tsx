@@ -4,6 +4,9 @@ import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import { Providers } from "./providers";
 import clsx from "clsx";
+import { ToastContainer } from "react-toastify";
+import { GlobalContextProvider } from "@/context/GlobalContext";
+import "react-toastify/dist/ReactToastify.css";
 
 export const metadata: Metadata = {
   title: {
@@ -37,7 +40,8 @@ export default function RootLayout({
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          {children}
+          <ToastContainer theme="dark" />
+          <GlobalContextProvider>{children}</GlobalContextProvider>
         </Providers>
       </body>
     </html>

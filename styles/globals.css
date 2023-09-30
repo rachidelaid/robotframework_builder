@@ -15,3 +15,11 @@ td {
   padding: 0.2em 0.4em;
   height: 1.2em;
 }
+
+.marginOnDragTop {
+  margin-top: 2.2em;
+}
+
+.marginOnDragBottom {
+  margin-bottom: 2.2em;
+}

@@ -63,7 +63,7 @@ to clean the data
 
 ## Next
 
-- [ ] add more keywords from other libraries (for now we have SeleniumLibrary and BuiltIn)
+- [ ] add more keywords from other libraries (for now we have SeleniumLibrary, BuiltIn, String and Screenshot)
 - [ ] add reading variables from excel file with a for loop for each row
 - [ ] add drag and drop to reorder keywords
 - [ ] add nested keywords
@@ -73,3 +73,7 @@ to clean the data
 - [ ] add upload json file that was saved from this app
 - [ ] render inputs based on the type of the argument
 - [ ] add keyword examples
+
+## Questions marks
+
+- handling the `for` loop

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Input } from "@nextui-org/input";
 import { KeywordType } from "@/types";
-import { SeleniumLibrary, BuiltIn } from "@/config/data";
+import { SeleniumLibrary, BuiltIn, Screenshot, Strings } from "@/config/data";
 import { Button } from "@nextui-org/button";
 import { Chip } from "@nextui-org/chip";
 import {
@@ -13,9 +13,12 @@ import {
   DropdownItem,
 } from "@nextui-org/dropdown";
 
+import { SearchIcon, FilterIcon } from "./Icons";
+import { useGlobalContext } from "@/context/GlobalContext";
 import BlockModal from "./BlockModal";
+import clsx from "clsx";
 
-const sources = ["SeleniumLibrary", "BuiltIn"];
+const sources = ["SeleniumLibrary", "BuiltIn", "Screenshot", "Strings"];
 
 const chipColors: Record<
   string,
@@ -23,73 +26,21 @@ const chipColors: Record<
 > = {
   SeleniumLibrary: "primary",
   BuiltIn: "secondary",
-  // "": "success",
-  // "": "warning",
+  Screenshot: "success",
+  Strings: "warning",
   // "": "danger",
   default: "default",
 };
 
-const SearchIcon = (props: { className?: string }) => (
-  <svg
-    fill="none"
-    focusable="false"
-    height="1em"
-    role="presentation"
-    viewBox="0 0 24 24"
-    width="1em"
-    {...props}
-  >
-    <path
-      d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-    />
-    <path
-      d="M22 22L20 20"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-    />
-  </svg>
-);
-
-const FilterIcon = (props: { className?: string }) => (
-  <svg
-    fill="none"
-    focusable="false"
-    height="1.5em"
-    role="presentation"
-    viewBox="0 0 24 24"
-    width="1.5em"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    strokeWidth="2"
-    stroke="currentColor"
-    {...props}
-  >
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <path d="M4 8h4v4h-4z"></path>
-    <path d="M6 4l0 4"></path>
-    <path d="M6 12l0 8"></path>
-    <path d="M10 14h4v4h-4z"></path>
-    <path d="M12 4l0 10"></path>
-    <path d="M12 18l0 2"></path>
-    <path d="M16 5h4v4h-4z"></path>
-    <path d="M18 4l0 1"></path>
-    <path d="M18 9l0 11"></path>
-  </svg>
-);
-
-const allKeywords = [...SeleniumLibrary, ...BuiltIn];
+const allKeywords = [...SeleniumLibrary, ...BuiltIn, ...Screenshot, ...Strings];
 
 const Keywords = ({
   setBlocks,
 }: {
   setBlocks: React.Dispatch<React.SetStateAction<any[]>>;
 }) => {
+  const { setUrl } = useGlobalContext();
+
   const addBtnRef = useRef<HTMLButtonElement>(null);
   const [list, setList] = useState<KeywordType[]>(allKeywords);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -103,17 +54,15 @@ const Keywords = ({
     if (value === "") {
       setList(allKeywords);
     } else {
-      setList(
-        allKeywords.filter((keyword) =>
-          keyword.name.toLowerCase().includes(value.toLowerCase())
-        )
+      const filteredList = allKeywords.filter((keyword) =>
+        keyword.name.toLowerCase().includes(value.toLowerCase())
       );
+      setList(filteredList);
     }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     const formData = new FormData(e.currentTarget);
-    console.log(formData);
     const newBlock = {
       ...selectedKeyword,
       args: selectedKeyword?.args.map((arg) => ({
@@ -127,6 +76,13 @@ const Keywords = ({
       canFail: formData.get("can_fail") === "true",
       id: Date.now(),
     };
+
+    if (newBlock.name === "Open Browser" || newBlock.name === "Go To") {
+      setUrl(
+        (newBlock.args?.find((arg) => arg.name === "url")?.value as string) ||
+          ""
+      );
+    }
 
     setBlocks((blocks) => [...blocks, newBlock]);
   };
@@ -218,8 +174,11 @@ const Keywords = ({
       <div className="overflow-auto flex flex-col h-full">
         <div className="flex flex-col gap-2 h-full">
           {list.length > 0 ? (
-            list.map((keyword) => (
-              <div className="flex gap-2 items-center" key={keyword.name}>
+            list.map((keyword, index) => (
+              <div
+                className="flex gap-2 items-center"
+                key={keyword.name + index}
+              >
                 {keyword.source && (
                   <Chip
                     size="sm"
@@ -248,54 +207,57 @@ const Keywords = ({
           )}
         </div>
       </div>
-      {selectedKeyword && (
-        <div className="border-t border-gray-700 mt-auto mr-6 pt-4">
-          <h3 className="text-xl font-bold">{selectedKeyword.name}</h3>
-          <p className="text-slate-500">{selectedKeyword.description}</p>
-          {selectedKeyword?.args &&
-            selectedKeyword?.args.map((arg) => (
-              <div key={arg.name} className="flex gap-4 m-1 justify-between">
-                <p
-                  className={`text-slate-300 ${
-                    arg.required ? "after:content-['*'] after:text-red-500" : ""
-                  }`}
-                  title="argument title"
-                >
-                  {arg.name}
-                </p>
-                <span
-                  title="argument default value"
-                  className="text-gray-300 p-1 rounded text-xs bg-gray-800"
-                >
-                  {arg.default || "--"}
-                </span>
-                <span
-                  title="argument type"
-                  className="text-gray-300 p-1 rounded text-xs bg-gray-800"
-                >
-                  {arg.type?.join(" ") || "--"}
-                </span>
-              </div>
-            ))}
-          {/* {selectedKeyword?.example && (
-            <div
-              className="mt-4 text-gray-300"
-              dangerouslySetInnerHTML={{
-                __html: selectedKeyword.example,
-              }}
-            ></div>
-          )} */}
-          <Button
-            color="primary"
-            variant="bordered"
-            className="mt-4 w-full"
-            onPress={() => setShowModal(true)}
-            ref={addBtnRef}
-          >
-            Add Block
-          </Button>
-        </div>
-      )}
+      <div
+        className={clsx(
+          "transition-all delay-200",
+          selectedKeyword
+            ? "h-fit border-t border-gray-700 mt-auto mr-6 pt-4"
+            : "h-0"
+        )}
+      >
+        {selectedKeyword && (
+          <>
+            <h3 className="text-xl font-bold">{selectedKeyword.name}</h3>
+            <p className="text-slate-500">{selectedKeyword.description}</p>
+            {selectedKeyword?.args &&
+              selectedKeyword?.args.map((arg) => (
+                <div key={arg.name} className="flex gap-4 m-1 justify-between">
+                  <p
+                    className={`text-slate-300 ${
+                      arg.required
+                        ? "after:content-['*'] after:text-red-500"
+                        : ""
+                    }`}
+                    title="argument title"
+                  >
+                    {arg.name}
+                  </p>
+                  <span
+                    title="argument default value"
+                    className="text-gray-300 p-1 rounded text-xs bg-gray-800"
+                  >
+                    {arg.default || "--"}
+                  </span>
+                  <span
+                    title="argument type"
+                    className="text-gray-300 p-1 rounded text-xs bg-gray-800"
+                  >
+                    {arg.type?.join(" ") || "--"}
+                  </span>
+                </div>
+              ))}
+            <Button
+              color="primary"
+              variant="bordered"
+              className="mt-4 w-full"
+              onPress={() => setShowModal(true)}
+              ref={addBtnRef}
+            >
+              Add Block
+            </Button>
+          </>
+        )}
+      </div>
     </div>
   );
 };

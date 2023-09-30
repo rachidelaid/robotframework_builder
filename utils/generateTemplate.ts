@@ -1,19 +1,23 @@
 import { KeywordType } from "@/types";
 
 export const generateTemplate = (blocks: KeywordType[]) => {
+  const keys: string[] = [];
+
   const columns = blocks
     .map((block) =>
       block.args.map((arg) => {
         if (arg.dynamic) {
-          return `[${block.name}] ${arg.name}${arg.required ? "*" : ""}`;
+          const keyName = keys.includes(arg.name)
+            ? `${arg.name} (${keys.filter((k) => k.includes(arg.name)).length})`
+            : arg.name;
+          keys.push(arg.name);
+          return `[${block.name}] ${keyName}${arg.required ? "*" : ""}`;
         }
         return null;
       })
     )
     .flat()
     .filter((b) => b != null);
-
-  console.log(columns);
 
   //generate csv file
   const csvContent = `${columns.join(",")}\n`;

@@ -1,28 +1,16 @@
 import { Button } from "@nextui-org/button";
 import { useRef } from "react";
+import { toast } from "react-toastify";
 
-const CameraIcon = (props: { className?: string }) => (
-  <svg
-    fill="none"
-    focusable="false"
-    height="1.5em"
-    role="presentation"
-    viewBox="0 0 24 24"
-    width="1.5em"
-    stroke-width="2"
-    stroke="currentColor"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    {...props}
-  >
-    <path stroke="none" d="M0 0h24v24H0z" fill="transparent"></path>
-    <path d="M7 18a4.6 4.4 0 0 1 0 -9a5 4.5 0 0 1 11 2h1a3.5 3.5 0 0 1 0 7h-1"></path>
-    <path d="M9 15l3 -3l3 3"></path>
-    <path d="M12 12l0 9"></path>
-  </svg>
-);
+import { UploadIcon } from "./Icons";
 
-const UploadCSV = ({ setCsvData }: { setCsvData: (data: any) => void }) => {
+const UploadCSV = ({
+  setCsvData,
+  headersForValidation,
+}: {
+  headersForValidation: string[];
+  setCsvData: (data: any) => void;
+}) => {
   const fileInput = useRef<HTMLInputElement>(null);
 
   const handleChange = (e: any) => {
@@ -33,7 +21,15 @@ const UploadCSV = ({ setCsvData }: { setCsvData: (data: any) => void }) => {
         ?.toString()
         .split("\n")
         .map((row) => row.split(","));
-      setCsvData(csvData?.slice(1));
+
+      if (csvData?.[0].join("&&") !== headersForValidation.join("&&")) {
+        toast.error("csv file doesn't match the template");
+        return;
+      }
+      toast.success("csv was uploaded successfully");
+
+      const data = csvData?.slice(1) || [];
+      setCsvData(data.length > 0 ? data : [[]]);
     };
     reader.readAsText(file);
   };
@@ -45,12 +41,12 @@ const UploadCSV = ({ setCsvData }: { setCsvData: (data: any) => void }) => {
         title="upload your csv file"
         color="warning"
         variant="faded"
-        aria-label="Take a photo"
+        aria-label="upload csv"
         onClick={() => {
           fileInput.current?.click();
         }}
       >
-        <CameraIcon />
+        <UploadIcon />
       </Button>
       <input
         type="file"

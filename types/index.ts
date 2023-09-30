@@ -20,4 +20,5 @@ export interface KeywordType {
   example?: string;
   disabled?: boolean;
   canFail?: boolean;
+  noActions?: boolean;
 }
