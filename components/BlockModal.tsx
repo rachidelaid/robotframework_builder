@@ -12,6 +12,8 @@ import { Checkbox } from "@nextui-org/checkbox";
 import { Input } from "@nextui-org/input";
 import { KeywordType } from "@/types";
 import { Switch } from "@nextui-org/switch";
+// import { GlobIcon } from "./Icons";
+// import { useGlobalContext } from "@/context/GlobalContext";
 
 export default function BlockModal({
   show,
@@ -75,7 +77,12 @@ export default function BlockModal({
 
   return (
     <>
-      <Modal isOpen={show} onOpenChange={handleChange} placement="top-center">
+      <Modal
+        isOpen={show}
+        onOpenChange={handleChange}
+        placement="top-center"
+        size="4xl"
+      >
         <ModalContent>
           {(onClose) => (
             <form
@@ -91,37 +98,53 @@ export default function BlockModal({
               <ModalBody>
                 {currentBlock.args.length > 0 ? (
                   <>
-                    {currentBlock.args.map((arg) => {
-                      const valueProps: any = {};
+                    <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+                      {currentBlock.args.map((arg) => {
+                        const valueProps: any = {};
 
-                      if (arg?.dynamic) {
-                        valueProps["value"] = arg.value;
-                      } else {
-                        valueProps["defaultValue"] = arg.value;
-                      }
+                        if (arg?.dynamic) {
+                          valueProps["value"] = arg.value;
+                        } else {
+                          valueProps["defaultValue"] = arg.value;
+                        }
 
-                      return (
-                        <div className="flex items-center gap-2" key={arg.name}>
-                          <Checkbox
-                            isSelected={arg?.dynamic}
-                            size="sm"
-                            title="this is a dynamic argument"
-                            name={`${arg.name}_dynamic`}
-                            value="true"
-                            onChange={updateBlock}
-                          />
-                          <Input
-                            autoFocus
-                            label={arg.name}
-                            variant="bordered"
-                            isRequired={arg.required}
-                            name={arg.name}
-                            readOnly={arg?.dynamic}
-                            {...valueProps}
-                          />
-                        </div>
-                      );
-                    })}
+                        return (
+                          <div
+                            className="flex items-center gap-2"
+                            key={arg.name}
+                          >
+                            <Checkbox
+                              isSelected={arg?.dynamic}
+                              size="sm"
+                              title="this is a dynamic argument"
+                              name={`${arg.name}_dynamic`}
+                              value="true"
+                              onChange={updateBlock}
+                            />
+                            <Input
+                              autoFocus
+                              label={arg.name}
+                              variant="bordered"
+                              isRequired={arg.required}
+                              name={arg.name}
+                              readOnly={arg?.dynamic}
+                              {...valueProps}
+                            />
+                            {/* {arg.name === "locator" && (
+                              <Button
+                                isIconOnly
+                                title="open website to get locator"
+                                color="default"
+                                variant="faded"
+                                aria-label="open website to get locator"
+                              >
+                                <GlobIcon />
+                              </Button>
+                            )} */}
+                          </div>
+                        );
+                      })}
+                    </div>
 
                     <div className="border-t border-gray-600 w-full mt-2 pt-4">
                       <Switch
