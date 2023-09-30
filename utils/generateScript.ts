@@ -3,8 +3,15 @@ import { KeywordType } from "@/types";
 export const generateScript = (blocks: KeywordType[], csvData: string[][]) => {
   const keys: string[] = [];
 
+  const loopStartIndex = blocks.findIndex(
+    (block) => block.name === "FOR LOOP START"
+  );
+  const loopEndIndex = blocks.findIndex(
+    (block) => block.name === "FOR LOOP END"
+  );
+
   const robotScript = blocks
-    .map((keywordData) => {
+    .map((keywordData, index) => {
       const { name, args, disabled, canFail } = keywordData;
 
       const argumentLines = args
@@ -12,15 +19,31 @@ export const generateScript = (blocks: KeywordType[], csvData: string[][]) => {
           if (arg.dynamic) {
             if (!keys.includes(arg.name)) {
               keys.push(arg.name);
+              return `\${VARIABLES}[${arg.name}]`;
+            } else {
+              const newkey = `${arg.name} (${
+                keys.filter((k) => k.includes(arg.name)).length
+              })`;
+              keys.push(newkey);
+              return `\${VARIABLES}[${newkey}]`;
             }
-            return `\${VARIABLES}[${arg.name}]`;
           }
 
           return arg.value;
         })
         .join("\t");
 
-      return `${disabled ? "#" : ""}\t${
+      if (name === "FOR LOOP START") {
+        return "\tFOR\t${VARIABLES}\tIN\t@{LIST}";
+      }
+
+      if (name === "FOR LOOP END") {
+        return `\tEND`;
+      }
+
+      return `${disabled ? "#" : ""}${
+        index > loopStartIndex && index < loopEndIndex ? "\t" : ""
+      }\t${
         canFail ? "Run Keyword And Continue On Failure" : ""
       }\t${name}\t${argumentLines}`;
     })
@@ -51,13 +74,10 @@ ${varsDefinition}
 
 *** Test Cases ***
 RUN USER DEFINED SCRIPT
-  FOR    \${VARIABLES}    IN    @{LIST}
-    Log    \${VARIABLES}
-    ${robotScript
-      .split("\n")
-      .map((r) => `\t${r}`)
-      .join("\n")}
-  END
+  ${robotScript
+    .split("\n")
+    .map((r) => `\t${r}`)
+    .join("\n")}
 `;
 
   const fileContent =
