@@ -29,7 +29,14 @@ const UploadCSV = ({
       toast.success("csv was uploaded successfully");
 
       const data = csvData?.slice(1) || [];
-      setCsvData(data.length > 0 ? data : [[]]);
+
+      if (data.length > 0) {
+        setCsvData(data);
+      } else {
+        setCsvData([[]]);
+
+        toast.error("csv file is empty");
+      }
     };
     reader.readAsText(file);
   };
