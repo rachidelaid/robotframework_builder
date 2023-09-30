@@ -3231,3 +3231,359 @@ export const BuiltIn: KeywordType[] = [
     example: `<tbody><tr>n<td>Wait Until Keyword Succeeds</td>n<td>2 min</td>n<td>5 sec</td>n<td>My keyword</td>n<td>argument</td>n</tr>n<tr>n<td>{result} =</td>n<td>Wait Until Keyword Succeeds</td>n<td>3x</td>n<td>200ms</td>n<td>My keyword</td>n</tr>n<tr>n<td>{result} =</td>n<td>Wait Until Keyword Succeeds</td>n<td>3x</td>n<td>strict: 200ms</td>n<td>My keyword</td>n</tr>n</tbody>`,
   },
 ];
+
+export const Screenshot: KeywordType[] = [
+  {
+    name: "Set Screenshot Directory",
+    args: [{ name: "path", required: true }],
+    description: "Sets the directory where screenshots are saved.",
+    source: "Screenshot",
+  },
+  {
+    name: "Take Screenshot",
+    args: [
+      { name: "name", required: false, default: "screenshot" },
+      { name: "width", required: false, default: "800px" },
+    ],
+    description:
+      "Takes a screenshot in JPEG format and embeds it into the log file.",
+    example: `<table border='1'><tbody><tr><td>Take Screenshot</td><td></td><td></td><td># LOGDIR/screenshot_1.jpg (index automatically incremented)</td></tr><tr><td>Take Screenshot</td><td>mypic</td><td></td><td># LOGDIR/mypic_1.jpg (index automatically incremented)</td></tr><tr><td>Take Screenshot</td><td>{TEMPDIR}/mypic</td><td></td><td># /tmp/mypic_1.jpg (index automatically incremented)</td></tr><tr><td>Take Screenshot</td><td>pic.jpg</td><td></td><td># LOGDIR/pic.jpg (always uses this file)</td></tr><tr><td>Take Screenshot</td><td>images/login.jpg</td><td>80%</td><td># Specify both name and width.</td></tr><tr><td>Take Screenshot</td><td>width=550px</td><td></td><td># Specify only width.</td></tr></tbody></table>`,
+    source: "Screenshot",
+  },
+  {
+    name: "Take Screenshot Without Embedding",
+    args: [{ name: "name", required: false, default: "screenshot" }],
+    description: "Takes a screenshot and links it from the log file.",
+    source: "Screenshot",
+  },
+];
+
+export const Strings: KeywordType[] = [
+  {
+    name: "Convert To Lower Case",
+    args: [{ name: "string", required: true }],
+    description: "Converts string to lower case.",
+    example: `<table border="1"><tbody><tr><td>{str1} =</td><td>Convert To Lower Case</td><td>ABC</td></tr><tr><td>{str2} =</td><td>Convert To Lower Case</td><td>1A2c3D</td></tr><tr><td>Should Be Equal</td><td>{str1}</td><td>abc</td></tr><tr><td>Should Be Equal</td><td>{str2}</td><td>1a2c3d</td></tr></tbody></table>`,
+    source: "Strings",
+  },
+  {
+    name: "Convert To Title Case",
+    args: [
+      { name: "string", required: true },
+      { name: "exclude", required: false, default: "None" },
+    ],
+    description: "Converts string to title case.",
+    example: `<table border="1"><tbody><tr><td>{str1} =</td><td>Convert To Title Case</td><td>hello, world!</td><td></td></tr><tr><td>{str2} =</td><td>Convert To Title Case</td><td>it's an OK iPhone</td><td>exclude=a, an, the</td></tr><tr><td>{str3} =</td><td>Convert To Title Case</td><td>distance is 1 km.</td><td>exclude=is, km.?</td></tr><tr><td>Should Be Equal</td><td>{str1}</td><td>Hello, World!</td><td></td></tr><tr><td>Should Be Equal</td><td>{str2}</td><td>It's an OK iPhone</td><td></td></tr><tr><td>Should Be Equal</td><td>{str3}</td><td>Distance is 1 km.</td><td></td></tr></tbody></table>`,
+    source: "Strings",
+  },
+  {
+    name: "Convert To Upper Case",
+    args: [{ name: "string", required: true }],
+    description: "Converts string to upper case.",
+    example: `<table border="1"><tbody><tr><td>{str1} =</td><td>Convert To Upper Case</td><td>abc</td></tr><tr><td>{str2} =</td><td>Convert To Upper Case</td><td>1a2C3d</td></tr><tr><td>Should Be Equal</td><td>{str1}</td><td>ABC</td></tr><tr><td>Should Be Equal</td><td>{str2}</td><td>1A2C3D</td></tr></tbody></table>`,
+    source: "Strings",
+  },
+  {
+    name: "Decode Bytes To String",
+    args: [
+      { name: "bytes", required: true },
+      { name: "encoding", required: true },
+      { name: "errors", required: false, default: "strict" },
+    ],
+    description:
+      "Decodes the given bytes to a Unicode string using the given encoding.",
+    example: `<table border="1"><tbody><tr><td>{string} =</td><td>Decode Bytes To String</td><td>{bytes}</td><td>UTF-8</td><td></td></tr><tr><td>{string} =</td><td>Decode Bytes To String</td><td>{bytes}</td><td>ASCII</td><td>errors=ignore</td></tr></tbody></table>`,
+    source: "Strings",
+  },
+  {
+    name: "Encode String To Bytes",
+    args: [
+      { name: "string", required: true },
+      { name: "encoding", required: true },
+      { name: "errors", required: false, default: "strict" },
+    ],
+    description:
+      "Encodes the given Unicode string to bytes using the given encoding.",
+    example: `<table border="1"><tbody><tr><td>{bytes} =</td><td>Encode String To Bytes</td><td>{string}</td><td>UTF-8</td><td></td></tr><tr><td>{bytes} =</td><td>Encode String To Bytes</td><td>{string}</td><td>ASCII</td><td>errors=ignore</td></tr></tbody></table>`,
+    source: "Strings",
+  },
+  {
+    name: "Fetch From Left",
+    args: [
+      { name: "string", required: true },
+      { name: "marker", required: true },
+    ],
+    description:
+      "Returns contents of the string before the first occurrence of marker.",
+    source: "Strings",
+  },
+  {
+    name: "Fetch From Right",
+    args: [
+      { name: "string", required: true },
+      { name: "marker", required: true },
+    ],
+    description:
+      "Returns contents of the string after the last occurrence of marker.",
+    source: "Strings",
+  },
+  {
+    name: "Format String",
+    args: [
+      { name: "template", required: true },
+      { name: "* positional", required: false },
+      { name: "** named", required: false },
+    ],
+    description:
+      "Formats a template using the given positional and named arguments.",
+    example: `<table border="1"><tbody><tr><td>{to} =</td><td>Format String</td><td>To: {} &lt;{}&gt;</td><td>{user}</td><td>{email}</td><td></td></tr><tr><td>{to} =</td><td>Format String</td><td>To: {name} &lt;{email}&gt;</td><td>name={name}</td><td>email={email}</td><td></td></tr><tr><td>{to} =</td><td>Format String</td><td>To: {user.name} &lt;{user.email}&gt;</td><td>user={user}</td><td></td><td></td></tr><tr><td>{xx} =</td><td>Format String</td><td>{:*^30}</td><td>centered</td><td></td><td></td></tr><tr><td>{yy} =</td><td>Format String</td><td>{0:{width}{base}}</td><td>{42}</td><td>base=X</td><td>width=10</td></tr><tr><td>{zz} =</td><td>Format String</td><td>{CURDIR}/template.txt</td><td>positional</td><td>named=value</td><td></td></tr></tbody></table>`,
+    source: "Strings",
+  },
+  {
+    name: "Generate Random String",
+    args: [
+      { name: "length", required: false, default: "8" },
+      { name: "chars", required: false, default: "[LETTERS][NUMBERS]" },
+    ],
+    description:
+      "Generates a string with a desired length from the given chars.",
+    example: `<table border="1"><tbody><tr><th>Marker</th><th>Explanation</th></tr><tr><td><code>[LOWER]</code></td><td>Lowercase ASCII characters from <code>a</code> to <code>z</code>.</td></tr><tr><td><code>[UPPER]</code></td><td>Uppercase ASCII characters from <code>A</code> to <code>Z</code>.</td></tr><tr><td><code>[LETTERS]</code></td><td>Lowercase and uppercase ASCII characters.</td></tr><tr><td><code>[NUMBERS]</code></td><td>Numbers from 0 to 9.</td></tr></tbody></table>`,
+    source: "Strings",
+  },
+  {
+    name: "Get Line",
+    args: [
+      { name: "string", required: true },
+      { name: "line_number", required: true },
+    ],
+    description: "Returns the specified line from the given string.",
+    example: `<table border="1"><tbody><tr><td>{first} =</td><td>Get Line</td><td>{string}</td><td>0</td></tr><tr><td>{2nd last} =</td><td>Get Line</td><td>{string}</td><td>-2</td></tr></tbody></table>`,
+    source: "Strings",
+  },
+  {
+    name: "Get Line Count",
+    args: [{ name: "string", required: true }],
+    description: "Returns and logs the number of lines in the given string.",
+    source: "Strings",
+  },
+  {
+    name: "Get Lines Containing String",
+    args: [
+      { name: "string", required: true },
+      { name: "pattern", required: true },
+      { name: "case_insensitive", required: false, default: "False" },
+    ],
+    description: "Returns lines of the given string that contain the pattern.",
+    example: `<table border="1"><tbody><tr><td>{lines} =</td><td>Get Lines Containing String</td><td>{result}</td><td>An example</td><td></td></tr><tr><td>{ret} =</td><td>Get Lines Containing String</td><td>{ret}</td><td>FAIL</td><td>case-insensitive</td></tr></tbody></table>`,
+    source: "Strings",
+  },
+  {
+    name: "Get Lines Matching Pattern",
+    args: [
+      { name: "string", required: true },
+      { name: "pattern", required: true },
+      { name: "case_insensitive", required: false, default: "False" },
+    ],
+    description: "Returns lines of the given string that match the pattern.",
+    example: `<table border="1"><tbody><tr><td><code>*</code></td><td>matches everything</td></tr><tr><td><code>?</code></td><td>matches any single character</td></tr><tr><td><code>[chars]</code></td><td>matches any character inside square brackets (e.g. <code>[abc]</code> matches either <code>a</code>, <code>b</code> or <code>c</code>)</td></tr><tr><td><code>[!chars]</code></td><td>matches any character not inside square brackets</td></tr></tbody></table>`,
+    source: "Strings",
+  },
+  {
+    name: "Get Lines Matching Regexp",
+    args: [
+      { name: "string", required: true },
+      { name: "pattern", required: true },
+      { name: "partial_match", required: false, default: "False" },
+      { name: "flags", required: false, default: "None" },
+    ],
+    description:
+      "Returns lines of the given string that match the regexp pattern.",
+    example: `<table border="1"><tbody><tr><td>{lines} =</td><td>Get Lines Matching Regexp</td><td>{result}</td><td>Regw{3} example</td><td></td></tr><tr><td>{lines} =</td><td>Get Lines Matching Regexp</td><td>{result}</td><td>Regw{3} example</td><td>partial_match=true</td></tr><tr><td>{ret} =</td><td>Get Lines Matching Regexp</td><td>{ret}</td><td>(?i)FAIL: .*</td><td></td></tr><tr><td>{ret} =</td><td>Get Lines Matching Regexp</td><td>{ret}</td><td>FAIL: .*</td><td>flags=IGNORECASE</td></tr></tbody></table>`,
+    source: "Strings",
+  },
+  {
+    name: "Get Regexp Matches",
+    args: [
+      { name: "string", required: true },
+      { name: "pattern", required: true },
+      { name: "* groups", required: false },
+      { name: "🏷 flags", required: false, default: "None" },
+    ],
+    description:
+      "Returns a list of all non-overlapping matches in the given string.",
+    example: `<table border="1"><tbody><tr><td>{no match} =</td><td>Get Regexp Matches</td><td>the string</td><td>xxx</td><td></td><td></td></tr><tr><td>{matches} =</td><td>Get Regexp Matches</td><td>the string</td><td>t..</td><td></td><td></td></tr><tr><td>{matches} =</td><td>Get Regexp Matches</td><td>the string</td><td>T..</td><td>flags=IGNORECASE</td><td></td></tr><tr><td>{one group} =</td><td>Get Regexp Matches</td><td>the string</td><td>t(..)</td><td>1</td><td></td></tr><tr><td>{named group} =</td><td>Get Regexp Matches</td><td>the string</td><td>t(?P&lt;name&gt;..)</td><td>name</td><td></td></tr><tr><td>{two groups} =</td><td>Get Regexp Matches</td><td>the string</td><td>t(.)(.)</td><td>1</td><td>2</td></tr></tbody></table>`,
+    source: "Strings",
+  },
+  {
+    name: "Get Substring",
+    args: [
+      { name: "string", required: true },
+      { name: "start", required: true },
+      { name: "end", required: false, default: "None" },
+    ],
+    description: "Returns a substring from start index to end index.",
+    example: `<table border="1"><tbody><tr><td>{ignore first} =</td><td>Get Substring</td><td>{string}</td><td>1</td><td></td></tr><tr><td>{ignore last} =</td><td>Get Substring</td><td>{string}</td><td></td><td>-1</td></tr><tr><td>{5th to 10th} =</td><td>Get Substring</td><td>{string}</td><td>4</td><td>10</td></tr><tr><td>{first two} =</td><td>Get Substring</td><td>{string}</td><td></td><td>1</td></tr><tr><td>{last two} =</td><td>Get Substring</td><td>{string}</td><td>-2</td><td></td></tr></tbody></table>`,
+    source: "Strings",
+  },
+  {
+    name: "Remove String",
+    args: [
+      { name: "string", required: true },
+      { name: "* removables", required: false },
+    ],
+    description: "Removes all removables from the given string.",
+    example: `<table border="1"><tbody><tr><td>{str} =</td><td>Remove String</td><td>Robot Framework</td><td>work</td><td></td></tr><tr><td>Should Be Equal</td><td>{str}</td><td>Robot Frame</td><td></td><td></td></tr><tr><td>{str} =</td><td>Remove String</td><td>Robot Framework</td><td>o</td><td>bt</td></tr><tr><td>Should Be Equal</td><td>{str}</td><td>R Framewrk</td><td></td><td></td></tr></tbody></table>`,
+    source: "Strings",
+  },
+  {
+    name: "Remove String Using Regexp",
+    args: [
+      { name: "string", required: true },
+      { name: "* patterns", required: false },
+      { name: "🏷 flags", required: false, default: "None" },
+    ],
+    description: "Removes patterns from the given string.",
+    source: "Strings",
+  },
+  {
+    name: "Replace String",
+    args: [
+      { name: "string", required: true },
+      { name: "search_for", required: true },
+      { name: "replace_with", required: true },
+      { name: "count", required: false, default: "-1" },
+    ],
+    description: "Replaces search_for in the given string with replace_with.",
+    example: `<table border="1"><tbody><tr><td>{str} =</td><td>Replace String</td><td>Hello, world!</td><td>world</td><td>tellus</td><td></td></tr><tr><td>Should Be Equal</td><td>{str}</td><td>Hello, tellus!</td><td></td><td></td><td></td></tr><tr><td>{str} =</td><td>Replace String</td><td>Hello, world!</td><td>l</td><td>{EMPTY}</td><td>count=1</td></tr><tr><td>Should Be Equal</td><td>{str}</td><td>Helo, world!</td><td></td><td></td><td></td></tr></tbody></table>`,
+    source: "Strings",
+  },
+  {
+    name: "Replace String Using Regexp",
+    args: [
+      { name: "string", required: true },
+      { name: "pattern", required: true },
+      { name: "replace_with", required: true },
+      { name: "count", required: false, default: "-1" },
+      { name: "flags", required: false, default: "None" },
+    ],
+    description: "Replaces pattern in the given string with replace_with.",
+    example: `<table border="1"><tbody><tr><td>{str} =</td><td>Replace String Using Regexp</td><td>{str}</td><td>20dd-dd-dd</td><td>&lt;DATE&gt;</td><td></td></tr><tr><td>{str} =</td><td>Replace String Using Regexp</td><td>{str}</td><td>(Hello|Hi)</td><td>{EMPTY}</td><td>count=1</td></tr></tbody></table>`,
+    source: "Strings",
+  },
+  {
+    name: "Should Be Byte String",
+    args: [
+      { name: "item", required: true },
+      { name: "msg", required: false, default: "None" },
+    ],
+    description: "Fails if the given item is not a byte string.",
+    source: "Strings",
+  },
+  {
+    name: "Should Be Lower Case",
+    args: [
+      { name: "string", required: true },
+      { name: "msg", required: false, default: "None" },
+    ],
+    description: "Fails if the given string is not in lower case.",
+    source: "Strings",
+  },
+  {
+    name: "Should Be String",
+    args: [
+      { name: "item", required: true },
+      { name: "msg", required: false, default: "None" },
+    ],
+    description: "Fails if the given item is not a string.",
+    source: "Strings",
+  },
+  {
+    name: "Should Be Title Case",
+    args: [
+      { name: "string", required: true },
+      { name: "msg", required: false, default: "None" },
+      { name: "exclude", required: false, default: "None" },
+    ],
+    description: "Fails if given string is not title.",
+    source: "Strings",
+  },
+  {
+    name: "Should Be Unicode String",
+    args: [
+      { name: "item", required: true },
+      { name: "msg", required: false, default: "None" },
+    ],
+    description: "Fails if the given item is not a Unicode string.",
+    source: "Strings",
+  },
+  {
+    name: "Should Be Upper Case",
+    args: [
+      { name: "string", required: true },
+      { name: "msg", required: false, default: "None" },
+    ],
+    description: "Fails if the given string is not in upper case.",
+    source: "Strings",
+  },
+  {
+    name: "Should Not Be String",
+    args: [
+      { name: "item", required: true },
+      { name: "msg", required: false, default: "None" },
+    ],
+    description: "Fails if the given item is a string.",
+    source: "Strings",
+  },
+  {
+    name: "Split String",
+    args: [
+      { name: "string", required: true },
+      { name: "separator", required: false, default: "None" },
+      { name: "max_split", required: false, default: "-1" },
+    ],
+    description: "Splits the string using separator as a delimiter string.",
+    example: `<table border="1"><tbody><tr><td>@{words} =</td><td>Split String</td><td>{string}</td><td></td><td></td><td></td></tr><tr><td>@{words} =</td><td>Split String</td><td>{string}</td><td>,{SPACE}</td><td></td><td></td></tr><tr><td>{pre}</td><td>{post} =</td><td>Split String</td><td>{string}</td><td>::</td><td>1</td></tr></tbody></table>`,
+    source: "Strings",
+  },
+  {
+    name: "Split String From Right",
+    args: [
+      { name: "string", required: true },
+      { name: "separator", required: false, default: "None" },
+      { name: "max_split", required: false, default: "-1" },
+    ],
+    description: "Splits the string using separator starting from right.",
+    example: `<table border="1"><tbody><tr><td>{first}</td><td>{rest} =</td><td>Split String</td><td>{string}</td><td>-</td><td>1</td></tr><tr><td>{rest}</td><td>{last} =</td><td>Split String From Right</td><td>{string}</td><td>-</td><td>1</td></tr></tbody></table>`,
+    source: "Strings",
+  },
+  {
+    name: "Split String To Characters",
+    args: [{ name: "string", required: true }],
+    description: "Splits the given string to characters.",
+    example: `<table border="1"><tbody><tr><td>@{characters} =</td><td>Split String To Characters</td><td>{string}</td></tr></tbody></table>`,
+    source: "Strings",
+  },
+  {
+    name: "Split To Lines",
+    args: [
+      { name: "string", required: true },
+      { name: "start", required: false, default: "0" },
+      { name: "end", required: false, default: "None" },
+    ],
+    description: "Splits the given string to lines.",
+    example: `<table border="1"><tbody><tr><td>@{lines} =</td><td>Split To Lines</td><td>{manylines}</td><td></td><td></td></tr><tr><td>@{ignore first} =</td><td>Split To Lines</td><td>{manylines}</td><td>1</td><td></td></tr><tr><td>@{ignore last} =</td><td>Split To Lines</td><td>{manylines}</td><td></td><td>-1</td></tr><tr><td>@{5th to 10th} =</td><td>Split To Lines</td><td>{manylines}</td><td>4</td><td>10</td></tr><tr><td>@{first two} =</td><td>Split To Lines</td><td>{manylines}</td><td></td><td>1</td></tr><tr><td>@{last two} =</td><td>Split To Lines</td><td>{manylines}</td><td>-2</td><td></td></tr></tbody></table>`,
+    source: "Strings",
+  },
+  {
+    name: "Strip String",
+    args: [
+      { name: "string", required: true },
+      { name: "mode", required: false, default: "both" },
+      { name: "characters", required: false, default: "None" },
+    ],
+    description:
+      "Remove leading and/or trailing whitespaces from the given string.",
+    example: `<table border="1"><tbody><tr><td>{stripped}=</td><td>Strip String</td><td>{SPACE}Hello{SPACE}</td><td></td></tr><tr><td>Should Be Equal</td><td>{stripped}</td><td>Hello</td><td></td></tr><tr><td>{stripped}=</td><td>Strip String</td><td>{SPACE}Hello{SPACE}</td><td>mode=left</td></tr><tr><td>Should Be Equal</td><td>{stripped}</td><td>Hello{SPACE}</td><td></td></tr><tr><td>{stripped}=</td><td>Strip String</td><td>aabaHelloeee</td><td>characters=abe</td></tr><tr><td>Should Be Equal</td><td>{stripped}</td><td>Hello</td><td></td></tr></tbody></table>`,
+    source: "Strings",
+  },
+];
