@@ -132,3 +132,42 @@ export const GlobIcon = (props: { className?: string }) => (
     <path d="M12.5 3a17 17 0 0 1 0 18" />
   </svg>
 );
+
+export const SaveJsonIcon = (props: { className?: string }) => (
+  <svg
+    fill="none"
+    height="1.5em"
+    viewBox="0 0 24 24"
+    width="1.5em"
+    strokeWidth={2}
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2"></path>
+    <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+    <path d="M14 4l0 4l-6 0l0 -4"></path>
+  </svg>
+);
+
+export const UploadJsonIcon = (props: { className?: string }) => (
+  <svg
+    fill="none"
+    height="1.5em"
+    viewBox="0 0 24 24"
+    width="1.5em"
+    strokeWidth={2}
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <path d="M20 16v-8l3 8v-8"></path>
+    <path d="M15 8a2 2 0 0 1 2 2v4a2 2 0 1 1 -4 0v-4a2 2 0 0 1 2 -2z"></path>
+    <path d="M1 8h3v6.5a1.5 1.5 0 0 1 -3 0v-.5"></path>
+    <path d="M7 15a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-2a1 1 0 0 0 -1 -1h-1a1 1 0 0 1 -1 -1v-2a1 1 0 0 1 1 -1h1a1 1 0 0 1 1 1"></path>
+  </svg>
+);

@@ -1,12 +1,12 @@
 "use client";
 
 import { Card, CardBody } from "@nextui-org/card";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@nextui-org/button";
 import { KeywordType } from "@/types";
 import { generateScript } from "@/utils/generateScript";
 import { toast } from "react-toastify";
-import { AlertIcon } from "@/components/Icons";
+import { AlertIcon, SaveJsonIcon, UploadJsonIcon } from "@/components/Icons";
 import Keywords from "@/components/Keywords";
 import BlockModal from "@/components/BlockModal";
 import { generateTemplate } from "@/utils/generateTemplate";
@@ -258,6 +258,42 @@ const Page = () => {
     [blocks]
   );
 
+  const saveJsonFile = () => {
+    const dataStr =
+      "data:text/json;charset=utf-8," +
+      encodeURIComponent(JSON.stringify(blocks));
+    const downloadAnchorNode = document.createElement("a");
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "script.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  };
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const uploadJsonFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const script = event.target?.result?.toString();
+      if (script) {
+        try {
+          const blocks = JSON.parse(script);
+          if (Array.isArray(blocks)) {
+            setBlocks(blocks);
+            toast.success("script was uploaded successfully");
+          } else {
+            toast.error("invalid script format");
+          }
+        } catch (error) {
+          toast.error("invalid file");
+        }
+      }
+    };
+    reader.readAsText(file as Blob);
+  };
+
   return (
     <div className="flex">
       <Keywords setBlocks={setBlocks} />
@@ -355,6 +391,38 @@ const Page = () => {
               headersForValidation={headersForValidation}
             />
           </>
+        )}
+        {blocks.length === 0 ? (
+          <>
+            <Button
+              isIconOnly
+              title="upload json"
+              color="primary"
+              variant="faded"
+              aria-label="upload json"
+              onPress={() => inputRef.current?.click()}
+            >
+              <UploadJsonIcon />
+            </Button>
+            <input
+              ref={inputRef}
+              type="file"
+              accept=".json"
+              className="h-0 w-0 absolute top-0 left-0 hidden"
+              onChange={uploadJsonFile}
+            />
+          </>
+        ) : (
+          <Button
+            isIconOnly
+            title="save this project as json"
+            color="primary"
+            variant="faded"
+            aria-label="save this project as json"
+            onPress={saveJsonFile}
+          >
+            <SaveJsonIcon />
+          </Button>
         )}
       </div>
     </div>
