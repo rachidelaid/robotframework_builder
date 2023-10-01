@@ -32,7 +32,7 @@ export default function BlockModal({
 
   useEffect(() => {
     setCurrentBlock(block);
-  }, [block, show]);
+  }, [block]);
 
   const handleChange = (e: boolean) => {
     setShow(e);
@@ -111,7 +111,7 @@ export default function BlockModal({
                         return (
                           <div
                             className="flex items-center gap-2"
-                            key={arg.name}
+                            key={arg.name + currentBlock.id}
                           >
                             <Checkbox
                               isSelected={arg?.dynamic}

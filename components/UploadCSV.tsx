@@ -22,7 +22,10 @@ const UploadCSV = ({
         .split("\n")
         .map((row) => row.split(","));
 
-      if (csvData?.[0].join("&&") !== headersForValidation.join("&&")) {
+      if (
+        csvData?.[0].map((x) => x.trim()).join("&&") !==
+        headersForValidation.join("&&")
+      ) {
         toast.error("csv file doesn't match the template");
         return;
       }

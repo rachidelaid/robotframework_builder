@@ -67,7 +67,5 @@ to clean the data
 - [ ] add nested keywords
 - [ ] add custom keywords
 - [ ] add documentation
-- [ ] add save as json file
-- [ ] add upload json file that was saved from this app
 - [ ] render inputs based on the type of the argument
 - [ ] add keyword examples
