@@ -75,7 +75,9 @@ const BlockCard = ({
             <p className="font-bold">{block.name}</p>
             {block.args.map((arg: any) => (
               <p key={arg.name} className="text-gray-500">
-                {arg.value}
+                {arg.value.length > 30
+                  ? `${arg.value.slice(0, 30)}...`
+                  : arg.value}
               </p>
             ))}
             {!block.noActions && (
